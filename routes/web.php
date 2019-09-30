@@ -16,20 +16,21 @@ $router->get('/', function () use ($router) {
     return "OK";
 });
 
-$router->group(['prefix' => 'api', 'as' => 'api'], function () use ($router) {
+// $router->group(['prefix' => 'api', 'as' => 'api'], function () use ($router) {
 
-	// User Group
-	$router->group(['prefix' => 'user', 'as' => 'user'], function () use ($router) {
-
+	// Auth Group
+	$router->group(['prefix' => 'auth', 'as' => 'auth'], function () use ($router) {
 		// Login
 		$router->post('login', [
 			'as' => 'login',
-			'uses' => 'UserController@login',
+			'uses' => 'AuthController@login',
 		]);
+	});
 
-		$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
-			
-			// Get All Users
+	$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
+
+		// User Group
+		$router->group(['prefix' => 'user', 'as' => 'user'], function () use ($router) {
 			$router->get('/', [
 				'as' => 'index',
 				'uses' => 'UserController@index',
@@ -40,19 +41,17 @@ $router->group(['prefix' => 'api', 'as' => 'api'], function () use ($router) {
 				'uses' => 'UserController@show',
 			]);
 		});
-    });
-    
-    $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
-        $router->group(['prefix' => 'video', 'as' => 'video'], function () use ($router) {
-            $router->get('/', [
+
+		// Video Group
+		$router->group(['prefix' => 'video', 'as' => 'video'], function () use ($router) {
+			$router->get('/', [
 				'as' => 'index',
 				'uses' => 'VideoController@index',
 			]);
-
 			$router->get('/{id:[0-9]+}', [
 				'as' => 'show',
 				'uses' => 'VideoController@show',
 			]);
-        });
-    });
-});
+		});
+	});
+// });
