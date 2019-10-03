@@ -34,6 +34,11 @@ class AuthController extends BaseController
 		return app('api.helper')->Success("Success", ['info' => $request->credentials->data]);
 	}
 
+	public function register(Request $request)
+	{
+		dd($request);
+	}
+
 	private function generateToken(User $user)
 	{
 		$iat = time();			// issued at (now)
