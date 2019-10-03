@@ -25,10 +25,17 @@ $router->get('/', function () use ($router) {
 			'as' => 'login',
 			'uses' => 'AuthController@login',
 		]);
+
+		$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
+			// getUserInfo
+			$router->get('info', [
+				'as' => 'info',
+				'uses' => 'AuthController@info',
+			]);
+		});
 	});
 
 	$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
-
 		// User Group
 		$router->group(['prefix' => 'user', 'as' => 'user'], function () use ($router) {
 			$router->get('/', [

@@ -18,7 +18,6 @@ class AuthController extends BaseController
 					return app('api.helper')->Success(
 						"Login Success",
 						[
-							'user' => $user,
 							'token' => $this->generateToken($user)
 						]
 					);
@@ -30,11 +29,16 @@ class AuthController extends BaseController
 		return app('api.helper')->failed("Wrong Parameter", []);
 	}
 
+	public function info(Request $request)
+	{
+		return app('api.helper')->Success("Success", ['info' => $request->credentials->data]);
+	}
+
 	private function generateToken(User $user)
 	{
 		$iat = time();			// issued at (now)
-		$nbf = $iat + 5;		// not before (+10 s)
-		$exp = $nbf + 60 * 60 * 24;	// expired nbf + 1d
+		$nbf = $iat;		// not before (+10 s)
+		$exp = $nbf + 60 * 60;	// expired nbf + 1d
 		
 		$payload = [
 			'iss' => env('APP_NAME'),
@@ -44,9 +48,8 @@ class AuthController extends BaseController
 			'exp' => $exp,
 			'data' => [
 				'username' => $user->username,
-				'nama' => $user->nama,
-				'email' => $user->email,
-				'level' => $user->level,
+				'name' => $user->name,
+				'role' => $user->role,
 			]
 		];
 

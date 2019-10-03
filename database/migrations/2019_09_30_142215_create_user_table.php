@@ -18,8 +18,8 @@ class CreateUserTable extends Migration
             $table->string('username')->nullabale();
             $table->string('password')->nullabale();
             $table->string('name')->nullabale();
-            $table->string('level')->nullabale();
-            $table->string('last_login')->nullabale();
+            $table->string('role')->nullabale();
+            $table->dateTime('last_login')->nullabale();
             $table->timestamps();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();

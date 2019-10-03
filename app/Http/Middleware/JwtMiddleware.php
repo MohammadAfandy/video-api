@@ -21,6 +21,7 @@ class JwtMiddleware
         if ($jwt_token) {
             try {
                 $credentials = JWT::decode($jwt_token, env('JWT_SECRET'), ['HS256']);
+                $request->request->add(['credentials' => $credentials]);
 
                 return $next($request);
             } catch (\Exception $e) {
