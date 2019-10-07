@@ -20,19 +20,19 @@ $router->get('/', function () use ($router) {
 $router->group(['prefix' => 'auth', 'as' => 'auth'], function () use ($router) {
 	// Login
 	$router->post('login', [
-		'as' => 'auth-login',
+		'as' => 'auth.login',
 		'uses' => 'AuthController@login',
 	]);
 	$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 		// getUserInfo
 		$router->get('info', [
-			'as' => 'auth-info',
+			'as' => 'auth.info',
 			'uses' => 'AuthController@info',
 		]);
 
 		// Register User
 		$router->post('register', [
-			'as' => 'auth-register',
+			'as' => 'auth.register',
 			'uses' => 'AuthController@register',
 		]);
 	});
@@ -52,11 +52,15 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 	// Video Group
 	$router->group(['prefix' => 'video', 'as' => 'video'], function () use ($router) {
 		$router->get('/', [
-			'as' => 'index',
+			'as' => 'video.index',
 			'uses' => 'VideoController@index',
 		]);
+		$router->post('/', [
+			'as' => 'video.store',
+			'uses' => 'VideoController@store',
+		]);
 		$router->get('/{id:[0-9]+}', [
-			'as' => 'show',
+			'as' => 'video.show',
 			'uses' => 'VideoController@show',
 		]);
 	});
