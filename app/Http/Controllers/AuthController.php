@@ -12,7 +12,11 @@ class AuthController extends BaseController
 {
 	public function login(Request $request)
 	{
-		if (!empty($request->username) && !empty($request->password)) {
+		try {
+			$this->validate($request, [
+				'username' => 'required',
+				'password' => 'required',
+			]);
 			if ($user = User::where('username', $request->username)->first()) {
 				if (Hash::check($request->password, $user->password)) {
 					return app('api.helper')->Success(
@@ -25,8 +29,11 @@ class AuthController extends BaseController
 				return app('api.helper')->failed("Wrong Username or Password", [], 401);
 			}
 			return app('api.helper')->failed("Username Not Found", [], 401);
+		} catch(\Illuminate\Validation\ValidationException $e) {
+			return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
+		} catch(\Exception $e) {
+			return app('api.helper')->failed("Server Error", $e->getMessage());
 		}
-		return app('api.helper')->failed("Wrong Parameter", []);
 	}
 
 	public function info(Request $request)
@@ -47,7 +54,7 @@ class AuthController extends BaseController
 		
 		$payload = [
 			'iss' => env('APP_NAME'),
-			'sub' => $user->id_user,
+			'sub' => $user->id,
 			'iat' => $iat,
 			'nbf' => $nbf,
 			'exp' => $exp,

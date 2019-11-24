@@ -16,7 +16,7 @@ $router->get('/', function () use ($router) {
     return "OK";
 });
 
-	// Auth Group
+// Auth Group
 $router->group(['prefix' => 'auth', 'as' => 'auth'], function () use ($router) {
 	// Login
 	$router->post('login', [
@@ -38,6 +38,14 @@ $router->group(['prefix' => 'auth', 'as' => 'auth'], function () use ($router) {
 	});
 });
 $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
+	$router->get('profile', [
+		'as' => 'profile',
+		'uses' => 'UserController@getProfile',
+	]);
+	$router->put('profile', [
+		'as' => 'profile',
+		'uses' => 'UserController@updateProfile',
+	]);
 	// User Group
 	$router->group(['prefix' => 'user', 'as' => 'user'], function () use ($router) {
 		$router->get('/', [
@@ -62,6 +70,14 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 		$router->get('/{id:[0-9]+}', [
 			'as' => 'video.show',
 			'uses' => 'VideoController@show',
+		]);
+		$router->put('/{id:[0-9]+}', [
+			'as' => 'video.update',
+			'uses' => 'VideoController@update',
+		]);
+		$router->delete('/{id:[0-9]+}', [
+			'as' => 'video.delete',
+			'uses' => 'VideoController@destroy',
 		]);
 	});
 });
