@@ -89,6 +89,7 @@ $app->routeMiddleware([
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\HelperServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
+$app->register(Weidner\Goutte\GoutteServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

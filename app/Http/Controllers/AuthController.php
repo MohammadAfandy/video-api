@@ -19,10 +19,10 @@ class AuthController extends BaseController
 			]);
 			if ($user = User::where('username', $request->username)->first()) {
 				if (Hash::check($request->password, $user->password)) {
-					return app('api.helper')->Success(
+					return app('api.helper')->success(
 						"Login Success",
 						[
-							'token' => $this->generateToken($user)
+							'token' => $this->generateToken($user),
 						]
 					);
 				}
@@ -38,7 +38,7 @@ class AuthController extends BaseController
 
 	public function info(Request $request)
 	{
-		return app('api.helper')->Success("Success", ['info' => $request->credentials->data]);
+		return app('api.helper')->success("Success", ['info' => $request->credentials->data]);
 	}
 
 	public function register(Request $request)
@@ -48,9 +48,9 @@ class AuthController extends BaseController
 
 	private function generateToken(User $user)
 	{
-		$iat = time();			// issued at (now)
-		$nbf = $iat;		// not before (+10 s)
-		$exp = $nbf + 60 * 60;	// expired nbf + 1d
+		$iat = time();
+		$nbf = $iat;
+		$exp = $nbf + 60 * 60;
 		
 		$payload = [
 			'iss' => env('APP_NAME'),
