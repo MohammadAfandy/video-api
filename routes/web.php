@@ -25,17 +25,16 @@ $router->group(['prefix' => 'auth', 'as' => 'auth'], function () use ($router) {
 		'as' => 'auth.login',
 		'uses' => 'AuthController@login',
 	]);
+	// Register User
+	$router->post('register', [
+		'as' => 'auth.register',
+		'uses' => 'AuthController@register',
+	]);
 	$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 		// getUserInfo
 		$router->get('info', [
 			'as' => 'auth.info',
 			'uses' => 'AuthController@info',
-		]);
-
-		// Register User
-		$router->post('register', [
-			'as' => 'auth.register',
-			'uses' => 'AuthController@register',
 		]);
 	});
 });

@@ -13,16 +13,18 @@ class CreateUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('tbl_user', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('username')->nullabale();
-            $table->string('password')->nullabale();
-            $table->string('name')->nullabale();
-            $table->string('role')->nullabale();
-            $table->dateTime('last_login')->nullabale();
+        Schema::create('user', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('username', 50)->unique();
+            $table->string('password');
+            $table->string('email', 100)->unique();
+            $table->string('name')->nullable();
+            $table->string('role')->nullable();
+            $table->string('images')->nullable();
+            $table->dateTime('last_login')->nullable();
             $table->timestamps();
-            $table->string('created_by')->nullable();
-            $table->string('updated_by')->nullable();
+            $table->string('created_by', 100)->nullable();
+            $table->string('updated_by', 100)->nullable();
         });
     }
 
@@ -33,6 +35,6 @@ class CreateUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tbl_user');
+        // Schema::dropIfExists('user');
     }
 }

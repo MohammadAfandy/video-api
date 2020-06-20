@@ -12,7 +12,11 @@ class UserController extends BaseController
 {
 	public function index(Request $request)
 	{
-		return app('api.helper')->success("Success", User::all());
+		$limit = (is_numeric($request->input('limit')) && $request->input('limit') <= 100) ? $request->input('limit') : 100;
+		$sort = explode(':', $request->input('sort'));
+		$order = !empty($sort[0]) ? $sort[0] : (new User)->getKeyName();
+		$desc = !empty($sort[1]) ? 'DESC' : 'ASC';
+		return app('api.helper')->success("Success", User::orderBy($order, $desc)->paginate($limit));
 	}
 
 	public function show($id)

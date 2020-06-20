@@ -12,7 +12,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable, Authorizable;
 
-    protected $table = 'tbl_user';
+    protected $table = 'user';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +20,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'username', 'level', 'images', 'last_login'
+        'name', 'email', 'username', 'level', 'images', 'last_login', 'password', 'role',
     ];
 
     /**
@@ -31,4 +31,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    public function video()
+    {
+        return $this->hasOne(Video::class, 'id_user', 'id');
+    }
 }

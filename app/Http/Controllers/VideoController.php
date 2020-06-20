@@ -9,6 +9,14 @@ use Weidner\Goutte\GoutteFacade;
 
 class VideoController extends BaseController
 {
+	private $id_user;
+
+	public function __construct(Request $request)
+	{
+		$this->id_user = $request->credentials->data->id_user;
+		$this->is_admin = $request->credentials->data->role == 'admin';
+	}
+
 	public function getYoutube(Request $request)
 	{
 		$data = [];
@@ -53,39 +61,49 @@ class VideoController extends BaseController
 		$sort = explode(':', $request->input('sort'));
 		$order = !empty($sort[0]) ? $sort[0] : (new Video)->getKeyName();
 		$desc = !empty($sort[1]) ? 'DESC' : 'ASC';
-		return app('api.helper')->success("Success", Video::orderBy($order, $desc)->paginate($limit));
+
+		$data = Video::select(['video.*', 'user.username'])
+					->join('user', 'video.id_user', '=', 'user.id')
+					->orderBy($order, $desc);
+
+		if (!$this->is_admin) {
+			$data->where('id_user', $this->id_user);
+		}
+
+		return app('api.helper')->success("Success", $data->paginate($limit));
 	}
 
 	public function show($id)
 	{
-		return app('api.helper')->success("Success", Video::where('id', $id)->first());
+		$video = Video::find(['id' => $id]);
+		if (!$this->is_admin) {
+			$video->where('id_user', $this->id_user);
+		}
+		$video = $video->first();
+		return app('api.helper')->success("Success", $video);
 	}
 
 	public function store(Request $request)
 	{
-		$video = new Video();
-
 		try {
+			$request->merge(['id_user' => $this->id_user]);
 			$this->validateVideo($request);
-			$video->name = $request->name;
-			$video->url = $request->url;
-			$video->thumbnail = $request->thumbnail;
-			$video->description = $request->description;
-
-			$video->save();
-			return app('api.helper')->success("Update Video Success");
+			$video = Video::create($request->all());
+			return app('api.helper')->success("Add Video Success");
 		} catch(\Illuminate\Validation\ValidationException $e) {
 			return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
 		} catch(\Exception $e) {
-			return app('api.helper')->failed("Server Error", $e->getMessage());
+			return app('api.helper')->failed("Add Video Failed", $e->getMessage());
 		}
-
-		return app('api.helper')->success("Add Video Success");
 	}
 
 	public function update(Request $request, $id)
 	{
-		$video = Video::find($id);
+		$video = Video::find(['id' => $id]);
+		if (!$this->is_admin) {
+			$video->where('id_user', $this->id_user);
+		}
+		$video = $video->first();
 
 		if ($video) {
 			try {
@@ -94,22 +112,24 @@ class VideoController extends BaseController
 				$video->url = $request->url;
 				$video->thumbnail = $request->thumbnail;
 				$video->description = $request->description;
-
 				$video->save();
 				return app('api.helper')->success("Update Video Success");
 			} catch(\Illuminate\Validation\ValidationException $e) {
 				return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
 			} catch(\Exception $e) {
-				return app('api.helper')->failed("Server Error", $e->getMessage());
+				return app('api.helper')->failed("Update Video Failed", $e->getMessage());
 			}
 		}
-
-		return app('api.helper')->failed("Update Video Failed");
+		return app('api.helper')->failed("Video Not Found", [], 404);
 	}
 
 	public function destroy($id)
 	{
-		$video = Video::find($id);
+		$video = Video::find(['id' => $id]);
+		if (!$this->is_admin) {
+			$video->where('id_user', $this->id_user);
+		}
+		$video = $video->first();
 
 		if ($video) {
 			$video->delete();
@@ -125,6 +145,7 @@ class VideoController extends BaseController
 			'name' => 'required|max:200',
 			'url' => 'required|max:500',
 			'description' => 'required|max:500',
+			'id_user' => 'required|exists:user,id',
 		]);
 	}
 }

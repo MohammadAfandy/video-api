@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Video extends Model
 {
-    protected $table = 'tbl_video';
+    protected $table = 'video';
 
     /**
      * The attributes that are mass assignable.
@@ -15,7 +15,7 @@ class Video extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'url', 'description', 'thumbnail',
+        'name', 'url', 'description', 'thumbnail', 'id_user',
     ];
 
     /**
@@ -26,4 +26,9 @@ class Video extends Model
     protected $hidden = [
         
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id');
+    }
 }

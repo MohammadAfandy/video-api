@@ -43,7 +43,17 @@ class AuthController extends BaseController
 
 	public function register(Request $request)
 	{
-		dd($request);
+		try {
+			$request->merge(['role' => 'public']);
+			$this->validateUser($request);
+			$request->merge(['password' => Hash::make($request->password)]);
+			$user = User::create($request->all());
+			return app('api.helper')->success("Register Success");
+		} catch(\Illuminate\Validation\ValidationException $e) {
+			return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
+		} catch(\Exception $e) {
+			return app('api.helper')->failed("Server Error", $e->getMessage());
+		}
 	}
 
 	private function generateToken(User $user)
@@ -59,6 +69,7 @@ class AuthController extends BaseController
 			'nbf' => $nbf,
 			'exp' => $exp,
 			'data' => [
+				'id_user' => $user->id,
 				'username' => $user->username,
 				'name' => $user->name,
 				'role' => $user->role,
@@ -66,5 +77,17 @@ class AuthController extends BaseController
 		];
 
 		return JWT::encode($payload, env('JWT_SECRET'));
+	}
+
+	private function validateUser($request)
+	{
+		$this->validate($request, [
+			'username' => 'required|max:50',
+			'name' => 'required|max:200',
+			'email' => 'required|max:200|email',
+			'role' => 'in:admin,public',
+			'password' => 'min:6|required_with:password_confirmation|same:password_confirmation',
+			'password_confirmation' => 'min:6'
+		]);
 	}
 }

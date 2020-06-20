@@ -13,15 +13,15 @@ class CreateVideoTable extends Migration
      */
     public function up()
     {
-        Schema::create('tbl_video', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('video', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('name');
             $table->text('url');
             $table->text('description')->nullable();
             $table->text('thumbnail')->nullable();
             $table->timestamps();
-            $table->string('created_by')->nullable();
-            $table->string('updated_by')->nullable();
+            $table->string('created_by', 100)->nullable();
+            $table->string('updated_by', 100)->nullable();
         });
     }
 
@@ -32,6 +32,6 @@ class CreateVideoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tbl_video');
+        // Schema::dropIfExists('video');
     }
 }
