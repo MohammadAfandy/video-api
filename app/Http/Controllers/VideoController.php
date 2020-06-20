@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use App\Models\Video;
-use Weidner\Goutte\GoutteFacade;
 
 class VideoController extends BaseController
 {
@@ -15,44 +14,6 @@ class VideoController extends BaseController
 	{
 		$this->id_user = $request->credentials->data->id_user;
 		$this->is_admin = $request->credentials->data->role == 'admin';
-	}
-
-	public function getYoutube(Request $request)
-	{
-		$data = [];
-		$crawler = GoutteFacade::request('GET', $request->input('video_url'));
-		$crawler->filter('a')->each(function($node) use (&$data) {
-			if (stripos($node->attr('href'), 'watch') !== false) {
-				$data[$node->attr('href')] = [
-					'name' => $node->text(),
-					'url' => 'https://www.youtube.com/embed/' . str_replace('/watch?v=', '', $node->attr('href')),
-				];
-			}
-		});
-
-		$img = [];
-		$crawler->filter('img')->each(function($node) use (&$img) {
-			if (stripos($node->attr('src'), 'i.ytimg.com/') !== false) {
-				$img[] = $node->attr('src');
-			}
-		});
-		$i = 0;
-		foreach ($data as $key => &$dat) {
-			if (isset($img[$i])) {
-				$dat['thumbnail'] = $img[$i];
-				$i++;
-			} else {
-				unset($data[$key]);
-			}
-		};
-		
-		foreach ($data as $dat) {
-			$request->request->add(['name' => $dat['name']]);
-			$request->request->add(['url' => $dat['url']]);
-			$request->request->add(['thumbnail' => $dat['thumbnail']]);
-			$request->request->add(['description' => 'Terserah']);
-			$this->store($request);
-		}
 	}
 
 	public function index(Request $request)

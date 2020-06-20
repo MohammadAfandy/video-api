@@ -16,8 +16,6 @@ $router->get('/', function () use ($router) {
     return "OK";
 });
 
-$router->get('/video/getYoutube', ['uses' => 'VideoController@getYoutube']);
-
 // Auth Group
 $router->group(['prefix' => 'auth', 'as' => 'auth'], function () use ($router) {
 	// Login
