@@ -57,11 +57,22 @@ class UserController extends BaseController
 			} catch (\Illuminate\Validation\ValidationException $e) {
 				return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
 			} catch (\Exception $e) {
-				return app('api.helper')->failed($e->getMessage());
+				return app('api.helper')->failed("Server Error");
 			}
 
 			return app('api.helper')->success("Update Profile Success");
 		}
+	}
+
+	public function destroy($id)
+	{
+		$user = User::find($id);
+
+		if ($user && $user->delete()) {
+			return app('api.helper')->success("Delete User Success");
+		}
+
+		return app('api.helper')->failed("Delete User Failed");
 	}
 
 	private function validateUser($request, $profile)

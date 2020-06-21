@@ -55,6 +55,10 @@ $router->group(['middleware' => 'jwt.auth'], function () use ($router) {
 			'as' => 'show',
 			'uses' => 'UserController@show',
 		]);
+		$router->delete('/{id:[0-9]+}', [
+			'as' => 'show',
+			'uses' => 'UserController@destroy',
+		]);
 	});
 	// Video Group
 	$router->group(['prefix' => 'video', 'as' => 'video'], function () use ($router) {

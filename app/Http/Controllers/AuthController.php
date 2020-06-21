@@ -32,7 +32,7 @@ class AuthController extends BaseController
 		} catch(\Illuminate\Validation\ValidationException $e) {
 			return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
 		} catch(\Exception $e) {
-			return app('api.helper')->failed("Server Error", $e->getMessage());
+			return app('api.helper')->failed("Server Error");
 		}
 	}
 
@@ -52,7 +52,7 @@ class AuthController extends BaseController
 		} catch(\Illuminate\Validation\ValidationException $e) {
 			return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
 		} catch(\Exception $e) {
-			return app('api.helper')->failed("Server Error", $e->getMessage());
+			return app('api.helper')->failed("Server Error");
 		}
 	}
 
@@ -82,9 +82,9 @@ class AuthController extends BaseController
 	private function validateUser($request)
 	{
 		$this->validate($request, [
-			'username' => 'required|max:50',
+			'username' => 'required|max:50|unique:user,username',
 			'name' => 'required|max:200',
-			'email' => 'required|max:200|email',
+			'email' => 'required|max:200|email|unique:user,email',
 			'role' => 'in:admin,public',
 			'password' => 'required|min:6|same:password_confirmation',
 			'password_confirmation' => 'required|min:6'

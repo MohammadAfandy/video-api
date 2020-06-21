@@ -54,7 +54,7 @@ class VideoController extends BaseController
 		} catch(\Illuminate\Validation\ValidationException $e) {
 			return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
 		} catch(\Exception $e) {
-			return app('api.helper')->failed("Add Video Failed", $e->getMessage());
+			return app('api.helper')->failed("Add Video Failed");
 		}
 	}
 
@@ -78,7 +78,7 @@ class VideoController extends BaseController
 			} catch(\Illuminate\Validation\ValidationException $e) {
 				return app('api.helper')->failed("Validation Failed", $e->errors(), 422);
 			} catch(\Exception $e) {
-				return app('api.helper')->failed("Update Video Failed", $e->getMessage());
+				return app('api.helper')->failed("Update Video Failed");
 			}
 		}
 		return app('api.helper')->failed("Video Not Found", [], 404);
