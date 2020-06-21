@@ -86,8 +86,8 @@ class AuthController extends BaseController
 			'name' => 'required|max:200',
 			'email' => 'required|max:200|email',
 			'role' => 'in:admin,public',
-			'password' => 'min:6|required_with:password_confirmation|same:password_confirmation',
-			'password_confirmation' => 'min:6'
+			'password' => 'required|min:6|same:password_confirmation',
+			'password_confirmation' => 'required|min:6'
 		]);
 	}
 }
