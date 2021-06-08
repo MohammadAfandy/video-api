@@ -47,7 +47,7 @@ class UserController extends BaseController
 					$path = 'images/profile/';
 					$file_name = $path . $profile->username . "_" . time() . ".png";
 					if (!file_exists($path)) {
-						mkdir($path, 775, true);
+						mkdir($path, 755, true);
 					}
 					Image::make($request->images)->save($file_name);
 					$profile->images = $file_name;
